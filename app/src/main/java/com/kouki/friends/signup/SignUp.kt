@@ -19,6 +19,9 @@ import com.kouki.friends.R
 @Composable
 @Preview
 fun SignUp() {
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -26,15 +29,13 @@ fun SignUp() {
     ) {
         ScreenTitle(R.string.createAnAccount)
         Spacer(modifier = Modifier.height(16.dp))
-        var email by remember { mutableStateOf("") }
         EmailField(
             email,
             onValueChanged = { email = it }
         )
-        var password by remember { mutableStateOf("") }
         PasswordField(
             value = password,
-            onValueChanged = { password = it }
+            onValueChange = { password = it }
         )
         Spacer(modifier = Modifier.height(16.dp))
         Button(
@@ -43,6 +44,19 @@ fun SignUp() {
         ) {
             Text(text = stringResource(id = R.string.signUp))
         }
+    }
+}
+
+@Composable
+private fun ScreenTitle(@StringRes resource: Int) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center
+    ) {
+        Text(
+            text = stringResource(resource),
+            style = TextStyle(fontSize = integerResource(id = R.integer.h4).sp)
+        )
     }
 }
 
@@ -64,44 +78,43 @@ private fun EmailField(
 @Composable
 private fun PasswordField(
     value: String,
-    onValueChanged: (String) -> Unit
+    onValueChange: (String) -> Unit
 ) {
     var isVisible by remember { mutableStateOf(false) }
+    val visualTransformation = if (isVisible) {
+        VisualTransformation.None
+    } else {
+        PasswordVisualTransformation()
+    }
     OutlinedTextField(
         modifier = Modifier.fillMaxWidth(),
         value = value,
         trailingIcon = {
-            IconButton(
-                onClick = { isVisible = !isVisible }
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_visibility),
-                    contentDescription = stringResource(id = R.string.toggleVisivility)
-                )
+            VisibilityToggle(isVisible){
+                isVisible = !isVisible
             }
         },
-        visualTransformation = if (isVisible) {
-            VisualTransformation.None
-        } else {
-            PasswordVisualTransformation()
-        },
+        visualTransformation = visualTransformation,
         label = {
             Text(text = stringResource(id = R.string.password))
         },
-        onValueChange = onValueChanged
+        onValueChange = onValueChange
     )
 }
 
-
 @Composable
-private fun ScreenTitle(@StringRes resource: Int) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.Center
+private fun VisibilityToggle(
+    isVisible: Boolean,
+    onToggle: () -> Unit
+) {
+    IconButton(
+        onClick = onToggle
     ) {
-        Text(
-            text = stringResource(resource),
-            style = TextStyle(fontSize = integerResource(id = R.integer.h4).sp)
+        val resource = if(isVisible) R.drawable.ic_visible else R.drawable.ic_invisible
+        Icon(
+            painter = painterResource(id = resource),
+            contentDescription = stringResource(id = R.string.toggleVisivility)
         )
     }
 }
+
