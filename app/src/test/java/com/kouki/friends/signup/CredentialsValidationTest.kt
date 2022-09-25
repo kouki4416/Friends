@@ -1,8 +1,8 @@
 package com.kouki.friends.signup
 
 import com.kouki.friends.InstantTaskExecutorExtension
+import com.kouki.friends.domain.validation.RegexCredentialValidator
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
@@ -19,7 +19,7 @@ class CredentialsValidationTest {
         "'   '",
     )
     fun invalidEmail(email: String) {
-        val viewModel = SignUpViewModel()
+        val viewModel = SignUpViewModel (RegexCredentialValidator())
         viewModel.createAccount(email, ":password:", ":about:")
         assertEquals(SignUpState.BadEmail, viewModel.signUpState.value)
     }
@@ -35,7 +35,7 @@ class CredentialsValidationTest {
         "'ABCDEF78#$'",
     )
     fun invalidPassword(password: String) {
-        val viewModel = SignUpViewModel()
+        val viewModel = SignUpViewModel (RegexCredentialValidator())
 
         viewModel.createAccount("anna@friends.com", password, ":about:")
 
