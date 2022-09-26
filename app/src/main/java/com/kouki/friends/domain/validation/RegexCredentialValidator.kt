@@ -17,7 +17,9 @@ class RegexCredentialValidator {
                 CredentialsValidationResult.InvalidEmail
             } else if (!passwordPattern.matcher(password).matches()) {
                 CredentialsValidationResult.InvalidPassword
-            } else TODO()
+            } else {
+                CredentialsValidationResult.Valid
+            }
             return result
         }
 }

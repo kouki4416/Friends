@@ -21,6 +21,7 @@ class SignUpViewModel(
                 _mutableSignUpstate.value = SignUpState.BadEmail
             is CredentialsValidationResult.InvalidPassword ->
                 _mutableSignUpstate.value = SignUpState.BadPassword
+            else -> null
         }
     }
 
