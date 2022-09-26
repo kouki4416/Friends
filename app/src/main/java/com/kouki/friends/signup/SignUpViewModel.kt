@@ -2,12 +2,13 @@ package com.kouki.friends.signup
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.kouki.friends.domain.user.User
 import com.kouki.friends.domain.validation.CredentialsValidationResult
 import com.kouki.friends.domain.validation.RegexCredentialValidator
 
 class SignUpViewModel(
     private val credentialsValidator: RegexCredentialValidator
-    ) {
+) {
     private val _mutableSignUpstate = MutableLiveData<SignUpState>()
     val signUpState: LiveData<SignUpState> = _mutableSignUpstate
 
@@ -21,7 +22,10 @@ class SignUpViewModel(
                 _mutableSignUpstate.value = SignUpState.BadEmail
             is CredentialsValidationResult.InvalidPassword ->
                 _mutableSignUpstate.value = SignUpState.BadPassword
-            else -> null
+            is CredentialsValidationResult.Valid -> {
+                val user = User("mayaId", "maya@friends.com", "about Maya")
+                _mutableSignUpstate.value = SignUpState.SignedUp(user)
+            }
         }
     }
 
