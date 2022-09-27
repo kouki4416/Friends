@@ -31,13 +31,29 @@ class SignUpViewModel(
                 if(isKnown){
                     _mutableSignUpstate.value = SignUpState.DuplicateAccount
                 } else{
-                    val userId = email.takeWhile { it != '@' } + "Id"
-                    val user = User(userId, email, about)
-                    usersForPassword.getOrPut(password, ::mutableListOf).add(user)
+                    val user = createUser(email, password, about)
                     _mutableSignUpstate.value = SignUpState.SignedUp(user)
                 }
             }
         }
+    }
+
+    private fun createUser(
+        email: String,
+        password: String,
+        about: String
+    ): User {
+        if(usersForPassword.values.flatten().any(){ it.email == email}){
+            throw DuplicationAccountException()
+        }
+        val userId = email.takeWhile { it != '@' } + "Id"
+        val user = User(userId, email, about)
+        usersForPassword.getOrPut(password, ::mutableListOf).add(user)
+        return user
+    }
+
+    class DuplicationAccountException : Throwable() {
+
     }
 
 }
