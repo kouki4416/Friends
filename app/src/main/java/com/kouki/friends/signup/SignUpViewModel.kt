@@ -25,14 +25,11 @@ class SignUpViewModel(
             is CredentialsValidationResult.InvalidPassword ->
                 _mutableSignUpstate.value = SignUpState.BadPassword
             is CredentialsValidationResult.Valid -> {
-                val isKnown = usersForPassword.values
-                    .flatten()
-                    .any { it.email == email }
-                if(isKnown){
-                    _mutableSignUpstate.value = SignUpState.DuplicateAccount
-                } else{
+                try {
                     val user = createUser(email, password, about)
                     _mutableSignUpstate.value = SignUpState.SignedUp(user)
+                } catch (duplicateAccount: DuplicationAccountException){
+                    _mutableSignUpstate.value = SignUpState.DuplicateAccount
                 }
             }
         }
