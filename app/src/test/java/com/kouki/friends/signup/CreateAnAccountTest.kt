@@ -18,8 +18,11 @@ class CreateAnAccountTest {
         // Act
         viewModel.createAccount(maya.email, "MaY@2021", maya.about)
         // Assert
-        assertEquals(SignUpState.SignedUp(maya), viewModel.signUpState.value)
+        assertEquals(SignUpState.SignedUp(maya), checkAccountExists(viewModel))
     }
+
+    private fun checkAccountExists(viewModel: SignUpViewModel) =
+        viewModel.signUpState.value
 
     @Test
     fun anotherAccountCreated(){
