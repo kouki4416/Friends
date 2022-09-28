@@ -9,17 +9,21 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
+
 @ExtendWith(InstantTaskExecutorExtension::class)
 class CreateAnAccountTest {
+
+    private val regexCredentialValidator = RegexCredentialValidator()
+    private val viewModel = SignUpViewModel(
+        regexCredentialValidator,
+        UserRepository(InMemoryUserCatalog())
+    )
 
     @Test
     fun accountCreated(){
         // Arrange
         val maya = User("mayaId", "maya@friends.com", "about Maya")
-        val viewModel = SignUpViewModel(
-            RegexCredentialValidator(),
-            UserRepository(InMemoryUserCatalog())
-        )
+
         // Act
         viewModel.createAccount(maya.email, "MaY@2021", maya.about)
         // Assert
@@ -33,10 +37,7 @@ class CreateAnAccountTest {
     fun anotherAccountCreated(){
         // Arrange
         val bob = User("bobId", "bob@friends.com", "about Bob")
-        val viewModel = SignUpViewModel(
-            RegexCredentialValidator(),
-            UserRepository(InMemoryUserCatalog())
-        )
+
         // Act
         viewModel.createAccount(bob.email, "Ple@seSubscribe1", bob.about)
         // Assert
@@ -48,12 +49,12 @@ class CreateAnAccountTest {
         // Arrange
         val anna = User("annaId", "anna@friends.com", "about Anna")
         val password = "AnNaPas@123"
+        val usersForPassword = mutableMapOf(password to mutableListOf(anna))
+        val userRepository = UserRepository(InMemoryUserCatalog(usersForPassword))
         val viewModel = SignUpViewModel(
-            RegexCredentialValidator(),
-            UserRepository(InMemoryUserCatalog())
-        ).also {
-            it.createAccount(anna.email, password, anna.about )
-        }
+            regexCredentialValidator,
+            userRepository
+        )
         // Act
         viewModel.createAccount(anna.email, password, anna.about)
         // Assert
