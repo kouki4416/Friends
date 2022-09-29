@@ -29,4 +29,8 @@ class SignUpViewModel(
         }
     }
 
+    fun createdAccount(){
+        _mutableSignUpstate.value = SignUpState.Done
+    }
+
 }

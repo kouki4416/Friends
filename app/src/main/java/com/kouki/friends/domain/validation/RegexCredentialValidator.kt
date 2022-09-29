@@ -6,7 +6,7 @@ class RegexCredentialValidator {
 
     private companion object {
         private const val EMAIL_REGEX =
-            """[a-zA-Z0-9+._%\-]{1,64}@[a-zA-Z0-9][a-zA-Z0-9\-]{1,64}(\.[a-zA-Z0-9][a-zA-Z0-9\-]{1,25})"""
+            """^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}${'$'}"""
         private const val PASSWORD_REGEX =
             """^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*+=\-]).{8,}$"""
     }

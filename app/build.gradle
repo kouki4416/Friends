@@ -76,6 +76,7 @@ dependencies {
     implementation "androidx.compose.runtime:runtime-livedata:$compose_version"
     //implementation "io.insert-koin:koin-android:$koinVersion"
     implementation 'androidx.activity:activity-compose:1.6.0'
+    implementation "androidx.navigation:navigation-compose:$nav_version"
 
     // junit 5
     // (Required) Writing and executing Unit Tests on the JUnit Platform

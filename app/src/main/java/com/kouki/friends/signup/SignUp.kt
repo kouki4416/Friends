@@ -4,6 +4,7 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.integerResource
 import androidx.compose.ui.res.painterResource
@@ -15,12 +16,29 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kouki.friends.R
+import com.kouki.friends.domain.user.InMemoryUserCatalog
+import com.kouki.friends.domain.user.UserRepository
+import com.kouki.friends.domain.validation.CredentialsValidationResult
+import com.kouki.friends.domain.validation.RegexCredentialValidator
 
 @Composable
 @Preview
-fun SignUp() {
+fun SignUp(
+    onSignedUp: () -> Unit
+) {
+
+    val credentialsValidator = RegexCredentialValidator()
+    val userRepository = UserRepository(InMemoryUserCatalog())
+    val signUpViewModel = SignUpViewModel(credentialsValidator, userRepository)
+
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    val signUpState by signUpViewModel.signUpState.observeAsState()
+
+    if(signUpState is SignUpState.SignedUp){
+        onSignedUp()
+        signUpViewModel.createdAccount()
+    }
 
     Column(
         modifier = Modifier
@@ -40,7 +58,9 @@ fun SignUp() {
         Spacer(modifier = Modifier.height(16.dp))
         Button(
             modifier = Modifier.fillMaxWidth(),
-            onClick = { }
+            onClick = {
+                signUpViewModel.createAccount(email, password, "")
+            }
         ) {
             Text(text = stringResource(id = R.string.signUp))
         }
