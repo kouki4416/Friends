@@ -18,7 +18,6 @@ import androidx.compose.ui.unit.sp
 import com.kouki.friends.R
 import com.kouki.friends.domain.user.InMemoryUserCatalog
 import com.kouki.friends.domain.user.UserRepository
-import com.kouki.friends.domain.validation.CredentialsValidationResult
 import com.kouki.friends.domain.validation.RegexCredentialValidator
 
 @Composable
@@ -33,9 +32,10 @@ fun SignUp(
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var about by remember { mutableStateOf("") }
     val signUpState by signUpViewModel.signUpState.observeAsState()
 
-    if(signUpState is SignUpState.SignedUp){
+    if (signUpState is SignUpState.SignedUp) {
         onSignedUp()
         signUpViewModel.createdAccount()
     }
@@ -56,16 +56,22 @@ fun SignUp(
             onValueChange = { password = it }
         )
         Spacer(modifier = Modifier.height(16.dp))
+        AboutField(
+            value = about,
+            onValueChange = { about = it }
+        )
+        Spacer(modifier = Modifier.height(16.dp))
         Button(
             modifier = Modifier.fillMaxWidth(),
             onClick = {
-                signUpViewModel.createAccount(email, password, "")
+                signUpViewModel.createAccount(email, password, about)
             }
         ) {
             Text(text = stringResource(id = R.string.signUp))
         }
     }
 }
+
 
 @Composable
 private fun ScreenTitle(@StringRes resource: Int) {
@@ -110,7 +116,7 @@ private fun PasswordField(
         modifier = Modifier.fillMaxWidth(),
         value = value,
         trailingIcon = {
-            VisibilityToggle(isVisible){
+            VisibilityToggle(isVisible) {
                 isVisible = !isVisible
             }
         },
@@ -130,7 +136,7 @@ private fun VisibilityToggle(
     IconButton(
         onClick = onToggle
     ) {
-        val resource = if(isVisible) R.drawable.ic_visible else R.drawable.ic_invisible
+        val resource = if (isVisible) R.drawable.ic_visible else R.drawable.ic_invisible
         Icon(
             painter = painterResource(id = resource),
             contentDescription = stringResource(id = R.string.toggleVisivility)
@@ -138,3 +144,17 @@ private fun VisibilityToggle(
     }
 }
 
+@Composable
+fun AboutField(
+    value: String,
+    onValueChange: (String) -> Unit
+) {
+    OutlinedTextField(
+        modifier = Modifier.fillMaxWidth(),
+        value = value,
+        label = {
+            Text(text = stringResource(id = R.string.about))
+        },
+        onValueChange = onValueChange
+    )
+}
