@@ -21,13 +21,9 @@ import com.kouki.friends.domain.validation.RegexCredentialValidator
 
 @Composable
 fun SignUpScreen(
+    signUpViewModel: SignUpViewModel,
     onSignedUp: () -> Unit
 ) {
-
-    val credentialsValidator = RegexCredentialValidator()
-    val userRepository = UserRepository(InMemoryUserCatalog())
-    val signUpViewModel = SignUpViewModel(credentialsValidator, userRepository)
-
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var about by remember { mutableStateOf("") }
