@@ -77,6 +77,13 @@ dependencies {
     //implementation "io.insert-koin:koin-android:$koinVersion"
     implementation 'androidx.activity:activity-compose:1.6.0'
     implementation "androidx.navigation:navigation-compose:$nav_version"
+    
+    // Koin main features for Android
+    implementation "io.insert-koin:koin-android:$koin_android_version"
+    implementation "io.insert-koin:koin-android-compat:$koin_android_version"
+    implementation "io.insert-koin:koin-androidx-workmanager:$koin_android_version"
+    implementation "io.insert-koin:koin-androidx-navigation:$koin_android_version"
+    implementation "io.insert-koin:koin-androidx-compose:$koin_android_compose_version"
 
     // junit 5
     // (Required) Writing and executing Unit Tests on the JUnit Platform
