@@ -1,6 +1,7 @@
 package com.kouki.friends.signup
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -15,9 +16,6 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kouki.friends.R
-import com.kouki.friends.domain.user.InMemoryUserCatalog
-import com.kouki.friends.domain.user.UserRepository
-import com.kouki.friends.domain.validation.RegexCredentialValidator
 
 @Composable
 fun SignUpScreen(
@@ -33,35 +31,54 @@ fun SignUpScreen(
         onSignedUp()
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        ScreenTitle(R.string.createAnAccount)
-        Spacer(modifier = Modifier.height(16.dp))
-        EmailField(
-            email,
-            onValueChanged = { email = it }
-        )
-        PasswordField(
-            value = password,
-            onValueChange = { password = it }
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        AboutField(
-            value = about,
-            onValueChange = { about = it }
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(
-            modifier = Modifier.fillMaxWidth(),
-            onClick = {
-                signUpViewModel.createAccount(email, password, about)
-            }
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
         ) {
-            Text(text = stringResource(id = R.string.signUp))
+            ScreenTitle(R.string.createAnAccount)
+            Spacer(modifier = Modifier.height(16.dp))
+            EmailField(
+                email,
+                onValueChanged = { email = it }
+            )
+            PasswordField(
+                value = password,
+                onValueChange = { password = it }
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            AboutField(
+                value = about,
+                onValueChange = { about = it }
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Button(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = {
+                    signUpViewModel.createAccount(email, password, about)
+                }
+            ) {
+                Text(text = stringResource(id = R.string.signUp))
+            }
         }
+        if(signUpState is SignUpState.DuplicateAccount){
+            InfoMessage(
+                R.string.duplicateAccountError
+            )
+        }
+    }
+
+}
+
+@Composable
+fun InfoMessage(@StringRes stringResource: Int) {
+    Surface(
+        modifier = Modifier
+            .background(MaterialTheme.colors.error)
+            .fillMaxWidth(),
+    ) {
+        Text(text = stringResource(id = stringResource))
     }
 }
 

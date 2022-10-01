@@ -29,9 +29,4 @@ class SignUpViewModel(
                 _mutableSignUpstate.value = userRepository.signUp(email, password, about)
         }
     }
-
-    fun createdAccount(){
-        _mutableSignUpstate.value = SignUpState.Done
-    }
-
 }

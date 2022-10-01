@@ -31,9 +31,12 @@ class MainActivity : ComponentActivity() {
                 Surface(color = MaterialTheme.colors.background) {
                     NavHost(navController = navController, startDestination = SIGN_UP) {
                         composable(SIGN_UP) {
-                            SignUpScreen(signUpViewModel) { navController.navigate(TIMELINE) }
+                            SignUpScreen(signUpViewModel) { navController.navigate("hello") }
                         }
                         composable(TIMELINE) {
+                            Timeline()
+                        }
+                        composable("hello"){
                             Timeline()
                         }
                     }

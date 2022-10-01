@@ -1,10 +1,11 @@
 package com.kouki.friends.domain.user
 
+import com.kouki.friends.domain.exceptions.BackendException
 import com.kouki.friends.domain.exceptions.DuplicationAccountException
 import com.kouki.friends.signup.SignUpState
 
 class UserRepository(
-    private val userCatalog: InMemoryUserCatalog = InMemoryUserCatalog()
+    private val userCatalog: UserCatalog
 ) {
 
     fun signUp(
@@ -17,6 +18,8 @@ class UserRepository(
             SignUpState.SignedUp(user)
         } catch (duplicateAccount: DuplicationAccountException) {
             SignUpState.DuplicateAccount
+        } catch (backendException: BackendException){
+            SignUpState.BackendError
         }
     }
 }
