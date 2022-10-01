@@ -9,7 +9,6 @@ import com.kouki.friends.R
 @Composable
 fun Timeline() {
     Text(
-        text = stringResource(id = R.string.timeline),
-        color = Color.Black
+        text = stringResource(id = R.string.timeline)
     )
 }

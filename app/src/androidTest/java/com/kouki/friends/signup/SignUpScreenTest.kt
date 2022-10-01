@@ -11,7 +11,7 @@ import org.junit.Test
 import org.koin.core.context.loadKoinModules
 import org.koin.dsl.module
 
-class SignUpTest {
+class SignUpScreenTest {
 
     @get:Rule
     val signUpTestRule = createAndroidComposeRule<MainActivity>()
@@ -19,7 +19,7 @@ class SignUpTest {
     private val userCatalog = InMemoryUserCatalog()
 
     private val signUpModule = module {
-        factory<UserCatalog> { InMemoryUserCatalog() }
+        factory<UserCatalog> { userCatalog }
     }
 
     @Before

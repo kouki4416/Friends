@@ -15,21 +15,19 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import com.kouki.friends.MainActivity
 import com.kouki.friends.R
 
 @Composable
 fun SignUpScreen(
     signUpViewModel: SignUpViewModel,
-    onSignedUp: () -> Unit
+    navController: NavHostController
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var about by remember { mutableStateOf("") }
     val signUpState by signUpViewModel.signUpState.observeAsState()
-
-    if (signUpState is SignUpState.SignedUp) {
-        onSignedUp()
-    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -57,6 +55,9 @@ fun SignUpScreen(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = {
                     signUpViewModel.createAccount(email, password, about)
+                    if(signUpState is SignUpState.SignedUp){
+                        navController.navigate(MainActivity.TIMELINE)
+                    }
                 }
             ) {
                 Text(text = stringResource(id = R.string.signUp))

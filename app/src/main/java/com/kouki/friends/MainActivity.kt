@@ -18,9 +18,9 @@ class MainActivity : ComponentActivity() {
 
     private val signUpViewModel: SignUpViewModel by viewModel()
 
-    private companion object {
-        private const val SIGN_UP = "signUp"
-        private const val TIMELINE = "timeline"
+    companion object {
+        const val SIGN_UP = "signUp"
+        const val TIMELINE = "timeline"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,12 +31,9 @@ class MainActivity : ComponentActivity() {
                 Surface(color = MaterialTheme.colors.background) {
                     NavHost(navController = navController, startDestination = SIGN_UP) {
                         composable(SIGN_UP) {
-                            SignUpScreen(signUpViewModel) { navController.navigate("hello") }
+                            SignUpScreen(signUpViewModel, navController)
                         }
                         composable(TIMELINE) {
-                            Timeline()
-                        }
-                        composable("hello"){
                             Timeline()
                         }
                     }
