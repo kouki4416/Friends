@@ -1,7 +1,7 @@
 package com.kouki.friends.signup
 
 import com.kouki.friends.domain.exceptions.BackendException
-import com.kouki.friends.domain.user.InMemoryUserCatalog
+import com.kouki.friends.domain.exceptions.ConnectionUnavailableException
 import com.kouki.friends.domain.user.User
 import com.kouki.friends.domain.user.UserCatalog
 import com.kouki.friends.domain.user.UserRepository
@@ -21,11 +21,25 @@ class FailedAccountCreationTest {
         assertEquals(SignUpState.BackendError, result)
     }
 
+    @Test
+    fun offlineError() {
+        val userRepository = UserRepository(OfflineUserCatalog())
+        val result = userRepository.signUp("email", "passoword", "about")
+
+        assertEquals(SignUpState.Offline, result)
+    }
+
+    class OfflineUserCatalog : UserCatalog {
+        override fun createUser(email: String, password: String, about: String): User {
+            throw ConnectionUnavailableException()
+        }
+    }
+
+
     class UnavailableUserCatalog : UserCatalog {
         override fun createUser(email: String, password: String, about: String): User {
             throw BackendException()
         }
-
     }
 
 }

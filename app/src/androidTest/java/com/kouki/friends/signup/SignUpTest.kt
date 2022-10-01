@@ -3,6 +3,7 @@ package com.kouki.friends.signup
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import com.kouki.friends.MainActivity
 import com.kouki.friends.domain.user.InMemoryUserCatalog
+import com.kouki.friends.domain.user.UserCatalog
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -18,7 +19,7 @@ class SignUpTest {
     private val userCatalog = InMemoryUserCatalog()
 
     private val signUpModule = module {
-        factory() { userCatalog }
+        factory<UserCatalog> { InMemoryUserCatalog() }
     }
 
     @Before
