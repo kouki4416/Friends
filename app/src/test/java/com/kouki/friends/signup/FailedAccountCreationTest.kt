@@ -15,7 +15,7 @@ class FailedAccountCreationTest {
     fun backendError() {
         // Arrange
         val userRepository = UserRepository(UnavailableUserCatalog())
-        val result = userRepository.signUp("email", "passoword", "about")
+        val result = userRepository.signUp(":email:", ":passoword:", ":about:")
         // Act
         // Assert
         assertEquals(SignUpState.BackendError, result)
@@ -24,7 +24,7 @@ class FailedAccountCreationTest {
     @Test
     fun offlineError() {
         val userRepository = UserRepository(OfflineUserCatalog())
-        val result = userRepository.signUp("email", "passoword", "about")
+        val result = userRepository.signUp(":email:", ":passoword:", ":about:")
 
         assertEquals(SignUpState.Offline, result)
     }
