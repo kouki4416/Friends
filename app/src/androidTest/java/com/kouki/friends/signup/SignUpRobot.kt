@@ -8,7 +8,6 @@ import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import com.kouki.friends.MainActivity
 import com.kouki.friends.R
-import org.koin.android.ext.android.get
 
 fun launchSignUpScreen(
     rule: AndroidComposeTestRule<ActivityScenarioRule<MainActivity>, MainActivity>,
@@ -69,6 +68,18 @@ class SignUpVerification(
     fun offlineErrorIsShown() {
         val offlineError = rule.activity.getString(R.string.offlineError)
         rule.onNodeWithText(offlineError)
+            .assertIsDisplayed()
+    }
+
+    fun badEmailErrorIsShown() {
+        val badEmail = rule.activity.getString(R.string.badEmailError)
+        rule.onNodeWithText(badEmail)
+            .assertIsDisplayed()
+    }
+
+    fun badPasswordErrorIsShown() {
+        val badPassword = rule.activity.getString(R.string.badPasswordError)
+        rule.onNodeWithText(badPassword)
             .assertIsDisplayed()
     }
 }

@@ -25,7 +25,9 @@ fun SignUpScreen(
     navController: NavHostController
 ) {
     var email by remember { mutableStateOf("") }
+    var isBadEmail by remember { mutableStateOf(false) }
     var password by remember { mutableStateOf("") }
+    var isBadPassword by remember { mutableStateOf(false) }
     var about by remember { mutableStateOf("") }
     val signUpState by signUpViewModel.signUpState.observeAsState()
 
@@ -38,12 +40,14 @@ fun SignUpScreen(
             ScreenTitle(R.string.createAnAccount)
             Spacer(modifier = Modifier.height(16.dp))
             EmailField(
-                email,
+                value = email,
+                isError = isBadEmail,
                 onValueChanged = { email = it }
             )
             PasswordField(
                 value = password,
-                onValueChange = { password = it }
+                isError = isBadPassword,
+                onValueChange = { password = it },
             )
             Spacer(modifier = Modifier.height(16.dp))
             AboutField(
@@ -55,7 +59,7 @@ fun SignUpScreen(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = {
                     signUpViewModel.createAccount(email, password, about)
-                    if(signUpState is SignUpState.SignedUp){
+                    if (signUpState is SignUpState.SignedUp) {
                         navController.navigate(MainActivity.TIMELINE)
                     }
                 }
@@ -63,13 +67,15 @@ fun SignUpScreen(
                 Text(text = stringResource(id = R.string.signUp))
             }
         }
-        if(signUpState is SignUpState.DuplicateAccount){
-            InfoMessage(
-                R.string.duplicateAccountError
-            )
-        } else if (signUpState is SignUpState.BackendError){
+        if (signUpState is SignUpState.BadEmail) {
+            isBadEmail = true
+        } else if (signUpState is SignUpState.BadPassword) {
+            isBadPassword = true
+        } else if (signUpState is SignUpState.DuplicateAccount) {
+            InfoMessage(R.string.duplicateAccountError)
+        } else if (signUpState is SignUpState.BackendError) {
             InfoMessage(stringResource = R.string.createAccountError)
-        } else if (signUpState is SignUpState.Offline){
+        } else if (signUpState is SignUpState.Offline) {
             InfoMessage(stringResource = R.string.offlineError)
         }
     }
@@ -104,13 +110,16 @@ private fun ScreenTitle(@StringRes resource: Int) {
 @Composable
 private fun EmailField(
     value: String,
+    isError: Boolean,
     onValueChanged: (String) -> Unit
 ) {
     OutlinedTextField(
         modifier = Modifier.fillMaxWidth(),
         value = value,
+        isError = isError,
         label = {
-            Text(text = stringResource(id = R.string.email))
+            val resource = if (isError) R.string.badEmailError else R.string.email
+            Text(text = stringResource(id = resource))
         },
         onValueChange = onValueChanged
     )
@@ -119,7 +128,8 @@ private fun EmailField(
 @Composable
 private fun PasswordField(
     value: String,
-    onValueChange: (String) -> Unit
+    isError: Boolean,
+    onValueChange: (String) -> Unit,
 ) {
     var isVisible by remember { mutableStateOf(false) }
     val visualTransformation = if (isVisible) {
@@ -130,6 +140,7 @@ private fun PasswordField(
     OutlinedTextField(
         modifier = Modifier.fillMaxWidth(),
         value = value,
+        isError = isError,
         trailingIcon = {
             VisibilityToggle(isVisible) {
                 isVisible = !isVisible
@@ -137,7 +148,8 @@ private fun PasswordField(
         },
         visualTransformation = visualTransformation,
         label = {
-            Text(text = stringResource(id = R.string.password))
+            val resource = if (isError) R.string.badPasswordError else R.string.password
+            Text(text = stringResource(id = resource))
         },
         onValueChange = onValueChange
     )

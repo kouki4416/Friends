@@ -31,6 +31,27 @@ class SignUpScreenTest {
     }
 
     @Test
+    fun displayBadEmailError(){
+        launchSignUpScreen(signUpTestRule){
+            typeEmail("email")
+            submit()
+        } verify {
+            badEmailErrorIsShown()
+        }
+    }
+
+    @Test
+    fun displayBadPasswordError(){
+        launchSignUpScreen(signUpTestRule){
+            typeEmail("jov@friends.com")
+            typePassword("password")
+            submit()
+        } verify {
+            badPasswordErrorIsShown()
+        }
+    }
+
+    @Test
     fun performSignUp() {
         launchSignUpScreen(signUpTestRule) {
             typeEmail("pank@friends.app")
