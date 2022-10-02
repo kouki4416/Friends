@@ -2,7 +2,9 @@ package com.kouki.friends.signup
 
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import com.kouki.friends.MainActivity
+import com.kouki.friends.domain.exceptions.BackendException
 import com.kouki.friends.domain.user.InMemoryUserCatalog
+import com.kouki.friends.domain.user.User
 import com.kouki.friends.domain.user.UserCatalog
 import org.junit.After
 import org.junit.Before
@@ -52,6 +54,31 @@ class SignUpScreenTest {
         }
     }
 
+    @Test
+    fun displayBackendError() {
+        // Arrange
+        // With Koin swapping DI only for this test is possible
+        val replaceModule = module {
+            factory<UserCatalog> { UnavailableUserCatalog() }
+        }
+        loadKoinModules(replaceModule)
+
+        // Assert
+        launchSignUpScreen(signUpTestRule){
+            typeEmail("joe@friends.com")
+            typePassword("Jo3@Paass")
+            submit()
+        }verify {
+            backEndErrorIsShown()
+        }
+    }
+
+    class UnavailableUserCatalog: UserCatalog {
+        override fun createUser(email: String, password: String, about: String): User {
+            throw BackendException()
+        }
+    }
+
     @After
     fun tearDown(){
         val resetModule = module {
@@ -65,3 +92,4 @@ class SignUpScreenTest {
     }
 
 }
+

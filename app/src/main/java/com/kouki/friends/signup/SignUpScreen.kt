@@ -67,6 +67,8 @@ fun SignUpScreen(
             InfoMessage(
                 R.string.duplicateAccountError
             )
+        } else if (signUpState is SignUpState.BackendError){
+            InfoMessage(stringResource = R.string.createAccountError)
         }
     }
 
