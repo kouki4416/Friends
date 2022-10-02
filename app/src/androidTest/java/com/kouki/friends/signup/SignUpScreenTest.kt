@@ -58,11 +58,7 @@ class SignUpScreenTest {
     @Test
     fun displayBackendError() {
         // Arrange
-        // With Koin swapping DI only for this test is possible
-        val replaceModule = module {
-            factory<UserCatalog> { UnavailableUserCatalog() }
-        }
-        loadKoinModules(replaceModule)
+        replaceUserCatalogWith(UnavailableUserCatalog())
 
         // Assert
         launchSignUpScreen(signUpTestRule){
@@ -77,10 +73,7 @@ class SignUpScreenTest {
     @Test
     fun displayOfflineError(){
         // Arrange
-        val replaceModule = module {
-            factory<UserCatalog> { OfflineUserCatalog() }
-        }
-        loadKoinModules(replaceModule)
+        replaceUserCatalogWith(OfflineUserCatalog())
 
         // Assert
         launchSignUpScreen(signUpTestRule){
@@ -99,6 +92,14 @@ class SignUpScreenTest {
             single{ InMemoryUserCatalog() }
         }
         loadKoinModules(resetModule)
+    }
+
+    // With Koin swapping DI only for this test is possible
+    private fun replaceUserCatalogWith(userCatalog: UserCatalog) {
+        val replaceModule = module {
+            factory { userCatalog }
+        }
+        loadKoinModules(replaceModule)
     }
 
     class OfflineUserCatalog: UserCatalog {
