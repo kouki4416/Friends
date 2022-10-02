@@ -3,6 +3,7 @@ package com.kouki.friends.signup
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import com.kouki.friends.MainActivity
 import com.kouki.friends.domain.exceptions.BackendException
+import com.kouki.friends.domain.exceptions.ConnectionUnavailableException
 import com.kouki.friends.domain.user.InMemoryUserCatalog
 import com.kouki.friends.domain.user.User
 import com.kouki.friends.domain.user.UserCatalog
@@ -73,18 +74,44 @@ class SignUpScreenTest {
         }
     }
 
-    class UnavailableUserCatalog: UserCatalog {
-        override fun createUser(email: String, password: String, about: String): User {
-            throw BackendException()
+    @Test
+    fun displayOfflineError(){
+        // Arrange
+        val replaceModule = module {
+            factory<UserCatalog> { OfflineUserCatalog() }
+        }
+        loadKoinModules(replaceModule)
+
+        // Assert
+        launchSignUpScreen(signUpTestRule){
+            typeEmail("joe@friends.com")
+            typePassword("Jo3@Paass")
+            submit()
+        }verify {
+            offlineErrorIsShown()
         }
     }
 
     @After
     fun tearDown(){
+        // Without this step, replaced module can be used for multiple tests
         val resetModule = module {
             single{ InMemoryUserCatalog() }
         }
         loadKoinModules(resetModule)
+    }
+
+    class OfflineUserCatalog: UserCatalog {
+        override fun createUser(email: String, password: String, about: String): User {
+            throw ConnectionUnavailableException()
+        }
+
+    }
+
+    class UnavailableUserCatalog: UserCatalog {
+        override fun createUser(email: String, password: String, about: String): User {
+            throw BackendException()
+        }
     }
 
     private fun createUserWith(signUpUserEmail: String, signUpUserPassword: String) {

@@ -69,6 +69,8 @@ fun SignUpScreen(
             )
         } else if (signUpState is SignUpState.BackendError){
             InfoMessage(stringResource = R.string.createAccountError)
+        } else if (signUpState is SignUpState.Offline){
+            InfoMessage(stringResource = R.string.offlineError)
         }
     }
 
