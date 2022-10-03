@@ -19,10 +19,8 @@ class SignUpScreenTest {
     @get:Rule
     val signUpTestRule = createAndroidComposeRule<MainActivity>()
 
-    private val userCatalog = InMemoryUserCatalog()
-
     private val signUpModule = module {
-        factory<UserCatalog> { userCatalog }
+        factory<UserCatalog> { InMemoryUserCatalog() }
     }
 
     @Before
@@ -65,8 +63,11 @@ class SignUpScreenTest {
     @Test
     fun displayDuplicateAccountError(){
         val signUpUserEmail = "alice@friends.com"
-        val signUpUserPassword = "@lice1Pass"
-        createUserWith(signUpUserEmail, signUpUserPassword)
+        val signUpUserPassword = "@lice1Pass#"
+        replaceUserCatalogWith(InMemoryUserCatalog().apply {
+            createUser(signUpUserEmail, signUpUserPassword, "")
+        })
+
         launchSignUpScreen(signUpTestRule){
             typeEmail(signUpUserEmail)
             typePassword(signUpUserPassword)
@@ -109,10 +110,7 @@ class SignUpScreenTest {
     @After
     fun tearDown(){
         // Without this step, replaced module can be used for multiple tests
-        val resetModule = module {
-            single{ InMemoryUserCatalog() }
-        }
-        loadKoinModules(resetModule)
+        replaceUserCatalogWith(InMemoryUserCatalog())
     }
 
     // With Koin swapping DI only for this test is possible
@@ -135,10 +133,5 @@ class SignUpScreenTest {
             throw BackendException()
         }
     }
-
-    private fun createUserWith(signUpUserEmail: String, signUpUserPassword: String) {
-        userCatalog.createUser(signUpUserEmail, signUpUserPassword, "")
-    }
-
 }
 
