@@ -7,6 +7,7 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.modifier.modifierLocalOf
 import androidx.compose.ui.res.integerResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -98,11 +99,21 @@ fun onSignedUp() {
 @Composable
 fun InfoMessage(@StringRes stringResource: Int) {
     Surface(
-        modifier = Modifier
-            .background(MaterialTheme.colors.error)
-            .fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth(),
+        color = MaterialTheme.colors.error,
+        elevation = 4.dp
     ) {
-        Text(text = stringResource(id = stringResource))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Text(
+                modifier = Modifier.padding(16.dp),
+                text = stringResource(id = stringResource),
+                color = MaterialTheme.colors.onError
+            )
+
+        }
     }
 }
 
