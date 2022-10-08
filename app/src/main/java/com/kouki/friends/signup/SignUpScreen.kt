@@ -1,13 +1,18 @@
 package com.kouki.friends.signup
 
 import androidx.annotation.StringRes
-import androidx.compose.foundation.background
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.FastOutLinearInEasing
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.modifier.modifierLocalOf
 import androidx.compose.ui.res.integerResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -19,6 +24,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.kouki.friends.MainActivity
 import com.kouki.friends.R
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun SignUpScreen(
@@ -31,8 +38,21 @@ fun SignUpScreen(
     var isBadPassword by remember { mutableStateOf(false) }
     var about by remember { mutableStateOf("") }
     var currentInfoMessage by remember { mutableStateOf(0) }
+    var isInfoMessageShowing by remember { mutableStateOf(false) }
 
+    val coroutineScope = rememberCoroutineScope()
     val signUpState by signUpViewModel.signUpState.observeAsState()
+
+    fun toggleInfoMessage(@StringRes message: Int) = coroutineScope.launch {
+        if(currentInfoMessage != message){
+            currentInfoMessage = message
+            if (!isInfoMessageShowing) {
+                isInfoMessageShowing = true
+                delay(1500)
+                isInfoMessageShowing = false
+            }
+        }
+    }
 
     when (signUpState) {
         is SignUpState.BadEmail -> {
@@ -42,13 +62,13 @@ fun SignUpScreen(
             isBadPassword = true
         }
         is SignUpState.DuplicateAccount -> {
-            currentInfoMessage = R.string.duplicateAccountError
+            toggleInfoMessage(R.string.duplicateAccountError)
         }
         is SignUpState.BackendError -> {
-            currentInfoMessage = R.string.createAccountError
+           toggleInfoMessage(R.string.createAccountError)
         }
         is SignUpState.Offline -> {
-            currentInfoMessage = R.string.offlineError
+            toggleInfoMessage(R.string.offlineError)
         }
         else -> {}
     }
@@ -89,30 +109,42 @@ fun SignUpScreen(
                 Text(text = stringResource(id = R.string.signUp))
             }
         }
-        if(currentInfoMessage != 0){
-            InfoMessage(stringResource = currentInfoMessage)
-        }
+        InfoMessage(
+            stringResource = currentInfoMessage,
+            isVisible = isInfoMessageShowing
+        )
     }
-
 }
 
 @Composable
-fun InfoMessage(@StringRes stringResource: Int) {
-    Surface(
-        modifier = Modifier.fillMaxWidth(),
-        color = MaterialTheme.colors.error,
-        elevation = 4.dp
+fun InfoMessage(@StringRes stringResource: Int, isVisible: Boolean) {
+    AnimatedVisibility(
+        visible = isVisible,
+        enter = slideInVertically(
+            initialOffsetY = {fullHeight ->  -fullHeight},
+            animationSpec = tween(durationMillis = 150, easing = FastOutLinearInEasing)
+        ),
+        exit = fadeOut(
+            targetAlpha = 0f,
+            animationSpec = tween(durationMillis = 250, easing = LinearOutSlowInEasing)
+        )
     ) {
-        Row(
+        Surface(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center
+            color = MaterialTheme.colors.error,
+            elevation = 4.dp
         ) {
-            Text(
-                modifier = Modifier.padding(16.dp),
-                text = stringResource(id = stringResource),
-                color = MaterialTheme.colors.onError
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    modifier = Modifier.padding(16.dp),
+                    text = stringResource(id = stringResource),
+                    color = MaterialTheme.colors.onError
+                )
 
+            }
         }
     }
 }
