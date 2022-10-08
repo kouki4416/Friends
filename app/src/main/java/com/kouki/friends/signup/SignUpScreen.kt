@@ -7,7 +7,6 @@ import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -24,56 +23,32 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.kouki.friends.MainActivity
 import com.kouki.friends.R
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import com.kouki.friends.signup.state.SignUpScreenState
 
 @Composable
 fun SignUpScreen(
     signUpViewModel: SignUpViewModel,
     navController: NavHostController
 ) {
-    var email by remember { mutableStateOf("") }
-    var isBadEmail by remember { mutableStateOf(false) }
-    var password by remember { mutableStateOf("") }
-    var isBadPassword by remember { mutableStateOf(false) }
-    var about by remember { mutableStateOf("") }
-    var currentInfoMessage by remember { mutableStateOf(0) }
-    var isInfoMessageShowing by remember { mutableStateOf(false) }
-
     val coroutineScope = rememberCoroutineScope()
+    val screenState by remember { mutableStateOf(SignUpScreenState(coroutineScope)) }
     val signUpState by signUpViewModel.signUpState.observeAsState()
-
-    fun toggleInfoMessage(@StringRes message: Int) = coroutineScope.launch {
-        if(currentInfoMessage != message){
-            currentInfoMessage = message
-            if (!isInfoMessageShowing) {
-                isInfoMessageShowing = true
-                delay(1500)
-                isInfoMessageShowing = false
-            }
-        }
-    }
-
-    fun resetUiState() {
-        currentInfoMessage = 0
-        isInfoMessageShowing = false
-    }
 
     when (signUpState) {
         is SignUpState.BadEmail -> {
-            isBadEmail = true
+            screenState.isBadEmail = true
         }
         is SignUpState.BadPassword -> {
-            isBadPassword = true
+            screenState.isBadPassword = true
         }
         is SignUpState.DuplicateAccount -> {
-            toggleInfoMessage(R.string.duplicateAccountError)
+            screenState.toggleInfoMessage(R.string.duplicateAccountError)
         }
         is SignUpState.BackendError -> {
-           toggleInfoMessage(R.string.createAccountError)
+           screenState.toggleInfoMessage(R.string.createAccountError)
         }
         is SignUpState.Offline -> {
-            toggleInfoMessage(R.string.offlineError)
+            screenState.toggleInfoMessage(R.string.offlineError)
         }
         else -> {}
     }
@@ -87,26 +62,26 @@ fun SignUpScreen(
             ScreenTitle(R.string.createAnAccount)
             Spacer(modifier = Modifier.height(16.dp))
             EmailField(
-                value = email,
-                isError = isBadEmail,
-                onValueChanged = { email = it }
+                value = screenState.email,
+                isError = screenState.isBadEmail,
+                onValueChanged = { screenState.email = it }
             )
             PasswordField(
-                value = password,
-                isError = isBadPassword,
-                onValueChange = { password = it },
+                value = screenState.password,
+                isError = screenState.isBadPassword,
+                onValueChange = { screenState.password = it },
             )
             Spacer(modifier = Modifier.height(16.dp))
             AboutField(
-                value = about,
-                onValueChange = { about = it }
+                value = screenState.about,
+                onValueChange = { screenState.about = it }
             )
             Spacer(modifier = Modifier.height(16.dp))
             Button(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = {
-                    resetUiState()
-                    signUpViewModel.createAccount(email, password, about)
+                    screenState.resetUiState()
+                    signUpViewModel.createAccount(screenState.email, screenState.password, screenState.about)
                     if (signUpState is SignUpState.SignedUp) {
                         navController.navigate(MainActivity.TIMELINE)
                     }
@@ -116,8 +91,8 @@ fun SignUpScreen(
             }
         }
         InfoMessage(
-            stringResource = currentInfoMessage,
-            isVisible = isInfoMessageShowing
+            stringResource = screenState.currentInfoMessage,
+            isVisible = screenState.isInfoMessageShowing
         )
     }
 }
