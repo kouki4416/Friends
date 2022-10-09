@@ -69,7 +69,7 @@ fun SignUpScreen(
             )
             PasswordField(
                 value = screenState.password,
-                isError = screenState.isBadPassword,
+                isError = screenState.showBadPassword,
                 onValueChange = { screenState.password = it },
             )
             Spacer(modifier = Modifier.height(16.dp))

@@ -61,6 +61,18 @@ class SignUpScreenTest {
     }
 
     @Test
+    fun resetBadPasswordError(){
+        launchSignUpScreen(signUpTestRule){
+            typeEmail("jov@friends.com")
+            typePassword("password")
+            submit()
+            typePassword("passwordR")
+        } verify {
+            badPasswordErrorIsNotShown()
+        }
+    }
+
+    @Test
     fun performSignUp() {
         launchSignUpScreen(signUpTestRule) {
             typeEmail("pank@friends.app")
