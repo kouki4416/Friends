@@ -1,6 +1,7 @@
 package com.kouki.friends.signup
 
 import com.kouki.friends.InstantTaskExecutorExtension
+import com.kouki.friends.app.TestDispatchers
 import com.kouki.friends.domain.user.InMemoryUserCatalog
 import com.kouki.friends.domain.user.User
 import com.kouki.friends.domain.user.UserRepository
@@ -12,7 +13,11 @@ import org.junit.jupiter.api.extension.ExtendWith
 @ExtendWith(InstantTaskExecutorExtension::class)
 class RenderingSignUpStatesTest {
     private val userRepository = UserRepository(InMemoryUserCatalog())
-    private val viewModel = SignUpViewModel(RegexCredentialValidator(), userRepository)
+    private val viewModel = SignUpViewModel(
+        RegexCredentialValidator(),
+        userRepository,
+        TestDispatchers()
+    )
     private val tom = User("tomId", "tom@friends.com", "about Tom")
 
     @Test

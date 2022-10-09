@@ -1,6 +1,7 @@
 package com.kouki.friends.signup
 
 import com.kouki.friends.InstantTaskExecutorExtension
+import com.kouki.friends.app.TestDispatchers
 import com.kouki.friends.domain.user.InMemoryUserCatalog
 import com.kouki.friends.domain.user.User
 import com.kouki.friends.domain.user.UserRepository
@@ -16,7 +17,8 @@ class CreateAnAccountTest {
     private val regexCredentialValidator = RegexCredentialValidator()
     private val viewModel = SignUpViewModel(
         regexCredentialValidator,
-        UserRepository(InMemoryUserCatalog())
+        UserRepository(InMemoryUserCatalog()),
+ TestDispatchers()
     )
 
     @Test
@@ -53,7 +55,8 @@ class CreateAnAccountTest {
         val userRepository = UserRepository(InMemoryUserCatalog(usersForPassword))
         val viewModel = SignUpViewModel(
             regexCredentialValidator,
-            userRepository
+            userRepository,
+ TestDispatchers()
         )
         // Act
         viewModel.createAccount(anna.email, password, anna.about)

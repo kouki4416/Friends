@@ -1,6 +1,7 @@
 package com.kouki.friends.signup
 
 import com.kouki.friends.InstantTaskExecutorExtension
+import com.kouki.friends.app.TestDispatchers
 import com.kouki.friends.domain.user.InMemoryUserCatalog
 import com.kouki.friends.domain.user.UserRepository
 import com.kouki.friends.domain.validation.CredentialsValidationResult
@@ -25,7 +26,8 @@ class CredentialsValidationTest {
     fun invalidEmail(email: String) {
         val viewModel = SignUpViewModel (
             RegexCredentialValidator(),
-            UserRepository(InMemoryUserCatalog())
+            UserRepository(InMemoryUserCatalog()),
+ TestDispatchers()
         )
         viewModel.createAccount(email, ":password:", ":about:")
         assertEquals(SignUpState.BadEmail, viewModel.signUpState.value)
@@ -44,7 +46,8 @@ class CredentialsValidationTest {
     fun invalidPassword(password: String) {
         val viewModel = SignUpViewModel (
             RegexCredentialValidator(),
-            UserRepository(InMemoryUserCatalog())
+            UserRepository(InMemoryUserCatalog()),
+ TestDispatchers()
         )
 
         viewModel.createAccount("anna@friends.com", password, ":about:")
