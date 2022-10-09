@@ -3,9 +3,13 @@ package com.kouki.friends.signup
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.kouki.friends.domain.user.UserRepository
 import com.kouki.friends.domain.validation.CredentialsValidationResult
 import com.kouki.friends.domain.validation.RegexCredentialValidator
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class SignUpViewModel(
     private val credentialsValidator: RegexCredentialValidator,
@@ -31,7 +35,12 @@ class SignUpViewModel(
     }
 
     private fun proceedWithSignUp(email: String, password: String, about: String) {
-        mutableSignUpstate.value = SignUpState.Loading
-        mutableSignUpstate.value = userRepository.signUp(email, password, about)
+        viewModelScope.launch {
+            mutableSignUpstate.value = SignUpState.Loading
+            mutableSignUpstate.value = withContext(Dispatchers.Unconfined){
+                userRepository.signUp(email, password, about)
+            }
+        }
+
     }
 }
