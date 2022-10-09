@@ -35,6 +35,7 @@ fun SignUpScreen(
     val screenState by remember { mutableStateOf(SignUpScreenState(coroutineScope)) }
     val signUpState by signUpViewModel.signUpState.observeAsState()
 
+
     when (signUpState) {
         is SignUpState.BadEmail -> {
             screenState.isBadEmail = true
@@ -81,11 +82,11 @@ fun SignUpScreen(
             Button(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = {
-                    screenState.resetUiState()
                     signUpViewModel.createAccount(screenState.email, screenState.password, screenState.about)
                     if (signUpState is SignUpState.SignedUp) {
                         navController.navigate(MainActivity.TIMELINE)
                     }
+                    screenState.resetUiState()
                 }
             ) {
                 Text(text = stringResource(id = R.string.signUp))

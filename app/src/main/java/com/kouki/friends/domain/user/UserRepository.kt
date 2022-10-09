@@ -10,7 +10,7 @@ class UserRepository(
     private val userCatalog: UserCatalog
 ) {
 
-    fun signUp(
+    suspend fun signUp(
         email: String,
         password: String,
         about: String

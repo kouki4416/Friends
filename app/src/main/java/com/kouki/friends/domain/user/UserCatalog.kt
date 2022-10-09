@@ -1,7 +1,7 @@
 package com.kouki.friends.domain.user
 
 interface UserCatalog {
-    fun createUser(
+    suspend fun createUser(
         email: String,
         password: String,
         about: String

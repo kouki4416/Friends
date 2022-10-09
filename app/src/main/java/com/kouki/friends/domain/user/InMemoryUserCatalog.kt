@@ -5,7 +5,7 @@ import com.kouki.friends.domain.exceptions.DuplicationAccountException
 class InMemoryUserCatalog(
     private val usersForPassword: MutableMap<String, MutableList<User>> = mutableMapOf()
 ) : UserCatalog {
-    override fun createUser(
+    override suspend fun createUser(
         email: String,
         password: String,
         about: String

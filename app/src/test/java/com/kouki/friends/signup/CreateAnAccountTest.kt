@@ -56,7 +56,7 @@ class CreateAnAccountTest {
         val viewModel = SignUpViewModel(
             regexCredentialValidator,
             userRepository,
- TestDispatchers()
+            TestDispatchers()
         )
         // Act
         viewModel.createAccount(anna.email, password, anna.about)
