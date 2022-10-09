@@ -7,6 +7,8 @@ import com.kouki.friends.domain.exceptions.ConnectionUnavailableException
 import com.kouki.friends.domain.user.InMemoryUserCatalog
 import com.kouki.friends.domain.user.User
 import com.kouki.friends.domain.user.UserCatalog
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -84,7 +86,7 @@ class SignUpScreenTest {
     }
 
     @Test
-    fun displayDuplicateAccountError(){
+    fun displayDuplicateAccountError(): Unit = runBlocking{
         val signUpUserEmail = "alice@friends.com"
         val signUpUserPassword = "@lice1Pass#"
         replaceUserCatalogWith(InMemoryUserCatalog().apply {
@@ -130,6 +132,26 @@ class SignUpScreenTest {
         }
     }
 
+    @Test
+    fun displayBlockingLoading(){
+        replaceUserCatalogWith(DelayingUserCatalog())
+        launchSignUpScreen(signUpTestRule){
+            typeEmail("ken@friends.com")
+            typePassword("Ken@2passw")
+            submit()
+        } verify {
+            blockingLoadingIsShown()
+        }
+    }
+
+    class DelayingUserCatalog : UserCatalog {
+        override suspend fun createUser(email: String, password: String, about: String): User {
+            // once test sees loading state, test finishes so don't concern for the delay time
+            delay(1000)
+            return User("id", email, about)
+        }
+    }
+
     @After
     fun tearDown(){
         // Without this step, replaced module can be used for multiple tests
@@ -145,14 +167,14 @@ class SignUpScreenTest {
     }
 
     class OfflineUserCatalog: UserCatalog {
-        override fun createUser(email: String, password: String, about: String): User {
+        override suspend fun createUser(email: String, password: String, about: String): User {
             throw ConnectionUnavailableException()
         }
 
     }
 
     class UnavailableUserCatalog: UserCatalog {
-        override fun createUser(email: String, password: String, about: String): User {
+        override suspend fun createUser(email: String, password: String, about: String): User {
             throw BackendException()
         }
     }

@@ -7,10 +7,12 @@ import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.integerResource
@@ -51,6 +53,9 @@ fun SignUpScreen(
         }
         is SignUpState.Offline -> {
             screenState.toggleInfoMessage(R.string.offlineError)
+        }
+        is SignUpState.Loading -> {
+            BlockingLoading()
         }
         else -> {}
     }
@@ -99,6 +104,18 @@ fun SignUpScreen(
     }
 }
 
+@Composable
+fun BlockingLoading() {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colors.surface.copy(alpha = 0.7f))
+            .testTag(stringResource(id = R.string.loading)),
+        contentAlignment = Alignment.Center
+    ){
+
+    }
+}
 
 
 @Composable
