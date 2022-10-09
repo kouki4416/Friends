@@ -5,7 +5,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kouki.friends.app.CoroutineDispatchers
-import com.kouki.friends.app.TestDispatchers
 import com.kouki.friends.domain.user.UserRepository
 import com.kouki.friends.domain.validation.CredentialsValidationResult
 import com.kouki.friends.domain.validation.RegexCredentialValidator
@@ -39,7 +38,7 @@ class SignUpViewModel(
     private fun proceedWithSignUp(email: String, password: String, about: String) {
         viewModelScope.launch {
             mutableSignUpstate.value = SignUpState.Loading
-            mutableSignUpstate.value = withContext(dispatchers.background){
+            mutableSignUpstate.value = withContext(dispatchers.background) {
                 userRepository.signUp(email, password, about)
             }
         }
