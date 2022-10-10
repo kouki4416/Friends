@@ -1,6 +1,7 @@
 package com.kouki.friends.domain.user
 
 import com.kouki.friends.domain.exceptions.DuplicationAccountException
+import kotlinx.coroutines.delay
 
 class InMemoryUserCatalog(
     private val usersForPassword: MutableMap<String, MutableList<User>> = mutableMapOf()

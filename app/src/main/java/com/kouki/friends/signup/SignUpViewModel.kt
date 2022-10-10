@@ -42,6 +42,5 @@ class SignUpViewModel(
                 userRepository.signUp(email, password, about)
             }
         }
-
     }
 }

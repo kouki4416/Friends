@@ -36,14 +36,15 @@ fun SignUpScreen(
     val coroutineScope = rememberCoroutineScope()
     val screenState by remember { mutableStateOf(SignUpScreenState(coroutineScope)) }
     val signUpState by signUpViewModel.signUpState.observeAsState()
-
+    // TODO remove this logic
+    var shouldNavigate by remember { mutableStateOf(false) }
 
     when (signUpState) {
         is SignUpState.BadEmail -> {
-            screenState.isBadEmail = true
+            screenState.showBadEmail()
         }
         is SignUpState.BadPassword -> {
-            screenState.isBadPassword = true
+            screenState.showBadPassword()
         }
         is SignUpState.DuplicateAccount -> {
             screenState.toggleInfoMessage(R.string.duplicateAccountError)
@@ -55,9 +56,14 @@ fun SignUpScreen(
             screenState.toggleInfoMessage(R.string.offlineError)
         }
         is SignUpState.Loading -> {
-            BlockingLoading()
+            screenState.toggleLoading()
         }
         else -> {}
+    }
+
+    if(shouldNavigate == true){
+        navController.navigate(MainActivity.TIMELINE)
+        shouldNavigate = false
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -88,9 +94,10 @@ fun SignUpScreen(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = {
                     signUpViewModel.createAccount(screenState.email, screenState.password, screenState.about)
-                    if (signUpState is SignUpState.SignedUp) {
-                        navController.navigate(MainActivity.TIMELINE)
-                    }
+//                    if (signUpState is SignUpState.SignedUp) {
+//                        navController.navigate(MainActivity.TIMELINE)
+//                    }
+                    shouldNavigate = true
                     screenState.resetUiState()
                 }
             ) {
@@ -101,6 +108,9 @@ fun SignUpScreen(
             stringResource = screenState.currentInfoMessage,
             isVisible = screenState.isInfoMessageShowing
         )
+        if(screenState.isLoading){
+            BlockingLoading()
+        }
     }
 }
 
@@ -113,7 +123,7 @@ fun BlockingLoading() {
             .testTag(stringResource(id = R.string.loading)),
         contentAlignment = Alignment.Center
     ){
-
+        CircularProgressIndicator()
     }
 }
 
