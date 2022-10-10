@@ -5,6 +5,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.background
@@ -50,7 +51,7 @@ fun SignUpScreen(
             screenState.toggleInfoMessage(R.string.duplicateAccountError)
         }
         is SignUpState.BackendError -> {
-           screenState.toggleInfoMessage(R.string.createAccountError)
+            screenState.toggleInfoMessage(R.string.createAccountError)
         }
         is SignUpState.Offline -> {
             screenState.toggleInfoMessage(R.string.offlineError)
@@ -61,7 +62,7 @@ fun SignUpScreen(
         else -> {}
     }
 
-    if(shouldNavigate == true){
+    if (shouldNavigate == true) {
         navController.navigate(MainActivity.TIMELINE)
         shouldNavigate = false
     }
@@ -93,7 +94,11 @@ fun SignUpScreen(
             Button(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = {
-                    signUpViewModel.createAccount(screenState.email, screenState.password, screenState.about)
+                    signUpViewModel.createAccount(
+                        screenState.email,
+                        screenState.password,
+                        screenState.about
+                    )
 //                    if (signUpState is SignUpState.SignedUp) {
 //                        navController.navigate(MainActivity.TIMELINE)
 //                    }
@@ -108,22 +113,32 @@ fun SignUpScreen(
             stringResource = screenState.currentInfoMessage,
             isVisible = screenState.isInfoMessageShowing
         )
-        if(screenState.isLoading){
-            BlockingLoading()
-        }
+        BlockingLoading(screenState.isLoading)
     }
 }
 
 @Composable
-fun BlockingLoading() {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colors.surface.copy(alpha = 0.7f))
-            .testTag(stringResource(id = R.string.loading)),
-        contentAlignment = Alignment.Center
-    ){
-        CircularProgressIndicator()
+fun BlockingLoading(isShowing: Boolean) {
+    AnimatedVisibility(
+        visible = isShowing,
+        enter = fadeIn(
+            initialAlpha = 0f,
+            animationSpec = tween(durationMillis = 150, easing = FastOutLinearInEasing)
+        ),
+        exit = fadeOut(
+            targetAlpha = 0f,
+            animationSpec = tween(durationMillis = 250, easing = LinearOutSlowInEasing)
+        )
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colors.surface.copy(alpha = 0.7f))
+                .testTag(stringResource(id = R.string.loading)),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator()
+        }
     }
 }
 
@@ -133,7 +148,7 @@ fun InfoMessage(@StringRes stringResource: Int, isVisible: Boolean) {
     AnimatedVisibility(
         visible = isVisible,
         enter = slideInVertically(
-            initialOffsetY = {fullHeight ->  -fullHeight},
+            initialOffsetY = { fullHeight -> -fullHeight },
             animationSpec = tween(durationMillis = 150, easing = FastOutLinearInEasing)
         ),
         exit = fadeOut(
