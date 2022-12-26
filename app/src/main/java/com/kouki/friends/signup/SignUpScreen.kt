@@ -62,11 +62,6 @@ fun SignUpScreen(
         else -> {}
     }
 
-    if (shouldNavigate == true) {
-        navController.navigate(MainActivity.TIMELINE)
-        shouldNavigate = false
-    }
-
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
@@ -99,10 +94,10 @@ fun SignUpScreen(
                         screenState.password,
                         screenState.about
                     )
-//                    if (signUpState is SignUpState.SignedUp) {
-//                        navController.navigate(MainActivity.TIMELINE)
-//                    }
-                    shouldNavigate = true
+                    if (signUpState is SignUpState.SignedUp) {
+                        navController.navigate(MainActivity.TIMELINE)
+                    }
+
                     screenState.resetUiState()
                 }
             ) {
